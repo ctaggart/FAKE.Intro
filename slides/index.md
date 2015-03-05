@@ -147,3 +147,24 @@ or
 
     
 ![After Compile](images/aftercompile.png)
+
+---
+
+#### Compiling test projects
+
+    let testDir = "./test/"
+    
+    Target "Clean" (fun _ ->
+        CleanDirs [buildDir; testDir]
+    )
+    
+    Target "BuildTest" (fun _ ->
+        !! "src/test/**/*.csproj"
+          |> MSBuildDebug testDir "Build"
+          |> Log "TestBuild-Output: "
+    )
+    
+    "Clean"
+      ==> "BuildApp"
+      ==> "BuildTest"
+      ==> "Default"
