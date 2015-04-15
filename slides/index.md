@@ -282,11 +282,11 @@ or
 #### Creating NuGet packages
 
     
-    NuGet (fun p -> 
+    NuGet (fun p ->
         {p with
             Authors = authors
             Project = projectName
-            Description = projectDescription                               
+            Description = projectDescription
             OutputPath = packagingRoot
             Summary = projectSummary
             WorkingDir = packagingDir
