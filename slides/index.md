@@ -27,6 +27,7 @@ Steffen Forkmann
 - BauBuild, Cake (Roslyn)
 
 ***
+
 ### Why should I use FAKE?
 
 ![Over 120 commiters in March](images/Commiters.png)
@@ -88,7 +89,7 @@ Steffen Forkmann
  
 ---
 
-#### Running FAKE
+### Running FAKE
 
 
     @echo off
@@ -107,7 +108,7 @@ or
     
 ---
 
-#### Hello world
+### Hello world
 
     // include Fake lib
     #r @"packages/FAKE/tools/FakeLib.dll"
@@ -123,13 +124,13 @@ or
 
 ---
 
-#### Hello world
+### Hello world
 
 ![After download](images/afterdownload.png)
 
 ---
 
-#### Cleaning up
+### Cleaning up
 
     let buildDir = "./build/"
     
@@ -144,14 +145,14 @@ or
       
 ---
 
-#### Cleaning up
+### Cleaning up
 
     
 ![After Clean](images/afterclean.png)
 
 ***
 
-#### Compiling the application
+### Compiling the application
 
     Target "BuildApp" (fun _ ->
         !! "src/app/**/*.csproj"
@@ -166,14 +167,14 @@ or
       
 ---
 
-#### Compiling the application
+### Compiling the application
 
     
 ![After Compile](images/aftercompile.png)
 
 ***
 
-#### Compiling test projects
+### Compiling test projects
 
     Target "BuildTest" (fun _ ->
         !! "src/test/**/*.csproj"
@@ -188,7 +189,7 @@ or
       
 ---
 
-#### Running tests
+### Running tests
    
     Target "Test" (fun _ ->
         !! (testDir </> "NUnit.Test.*.dll")
@@ -208,14 +209,14 @@ or
 
 ---
 
-#### Running tests
+### Running tests
 
     
 ![After Compile](images/alltestsgreen.png)
       
 ---
 
-#### Running tests (in parallel)
+### Running tests (in parallel)
    
     Target "Test" (fun _ ->
         !! (testDir </> "NUnit.Test.*.dll")
@@ -234,7 +235,7 @@ or
       
 ---
 
-#### Running tests (xUnit)
+### Running tests (xUnit)
    
     Target "Test" (fun _ ->
         !! (testDir </> "xUnit.Test.*.dll")
@@ -250,7 +251,7 @@ or
 
 ***
 
-#### Adding FxCop
+### Adding FxCop
    
     Target "FxCop" (fun () ->  
         !! (buildDir </> "**/*.dll") 
@@ -263,7 +264,7 @@ or
       
 ***
 
-#### Create AssemblyInfo files
+### Create AssemblyInfo files
    
 
     open Fake.AssemblyInfoFile
@@ -279,7 +280,7 @@ or
          
 ***
          
-#### Creating NuGet packages
+### Creating NuGet packages
 
     
     NuGet (fun p ->
@@ -298,7 +299,7 @@ or
       
 ---
          
-#### Creating NuGet packages
+### Creating NuGet packages
 
     [lang=xml]
     <?xml version="1.0" encoding="utf-8"?>
@@ -325,7 +326,7 @@ or
     
 ***
          
-#### Creating NuGet packages (using Paket)
+### Creating NuGet packages (using Paket)
     
       Target "NuGet" (fun _ ->    
           Paket.Pack (fun p -> 
@@ -340,6 +341,13 @@ or
                   WorkingDir = tempDir }) 
       )
       
+***
+
+# DEMO
+
+
+![FAKE](images/logo.png)
+
 ***
 
 ### What is Paket?
@@ -369,11 +377,11 @@ or
     #I "packages/R.NET.Community.1.5.15/lib/net40"
     #I "packages/R.NET.Community.FSharp.0.1.8/lib/net40"
     
---
+---
 
 ### Paket - Project Principles
 
-- Integrate well into the existing NuGet ecosystem
+- Integrate into the existing NuGet ecosystem
 - Make things work with minimal tooling (plain text files)
 - Make it work on all platforms
 - Automate everything
@@ -448,9 +456,9 @@ or
 
     $ paket install
 
-- Computes `paket.lock` based on `paket.dependencies`
+- Computes package resultion for `paket.lock`
 - Restores all direct and transitive dependencies
-- Processes all projects and adds references to the libraries
+- Processes all projects and adds references
 
 ***
 
@@ -459,7 +467,7 @@ or
 
     $ paket outdated
 
-- Lists all dependencies that have newer versions available:
+- Lists all dependencies that have newer versions:
 
 <br /><br />
 <img style="border: none" src="images/paket-outdated.png" alt="Paket outdated" /> 
@@ -471,8 +479,7 @@ or
 
     $ paket update
 
-- Recomputes `paket.lock` based on `paket.dependencies`
-- Updates all versions to the latest matching all restrictions 
+- Recomputes `paket.lock` 
 - Runs `paket install`
 
 ***
@@ -502,27 +509,6 @@ or
 
 ***
 
-### Simplify dependencies
-
-
-    $ paket simplify
-
-- Computes transitive dependencies from `paket.lock` file  
-  - Removes these from `paket.dependencies`
-  - Removes these `paket.references`
-- Especially useful after conversion from NuGet ([Sample](http://fsprojects.github.io/Paket/paket-simplify.html#Sample))
-
-***
-
-### Bootstrapping
-
-- Don't commit `paket.exe` to your repository
-- Bootstrapper is available for [download](https://github.com/fsprojects/Paket/releases/latest)
-- Bootstrapper allows to download latest `paket.exe`
-- Can be used for CI build or from inside Visual Studio
-
-***
-
 ### Source code dependencies
 
 - Allow to reference plain source code files
@@ -531,27 +517,25 @@ or
   - [GitHub gists](https://gist.github.com/)
   - HTTP resources
   
-***
+---
 
-### Source code dependencies
-#### GitHub sample (1)
+### GitHub dependencies
 
-- Add dependency to the `paket.dependencies` file 
+In  `paket.dependencies`: 
 
 
     github forki/FsUnit FsUnit.fs
     
-- Also add a file reference to a `paket.references` file 
+In `paket.references`: 
 
 
     File:FsUnit.fs
 
-***
+---
 
-### Source code dependencies 
-#### GitHub sample (2)
+### GitHub dependencies
 
-- `paket install` will add a new section to `paket.lock`:
+`paket install` adds a new section to `paket.lock`:
 
 
     GITHUB
@@ -559,33 +543,40 @@ or
       specs:
         FsUnit.fs (7623fc13439f0e60bd05c1ed3b5f6dcb937fe468)
 
-- `paket install` will also add a reference to the project:
+It will also add a reference to the project:
 
-<br /><br />
 <img style="border: none" src="images/github_ref_default_link.png" alt="Source reference" />
 
-***
+---
 
-### Source code dependencies 
-#### Use case - "Type Provider definition"
+### Type Provider definition
 
-- For F# Type Providers you need a couple of helper files
+- F# Type Providers need a couple of helper files
 - It was painful to keep these up-to-date
-- Reference F# Type Provider files in `paket.dependencies`:
+- Reference StarterPack in `paket.dependencies`:
 
 
+    [lang=batch]
     github fsprojects/FSharp.TypeProviders.StarterPack src/ProvidedTypes.fsi
     github fsprojects/FSharp.TypeProviders.StarterPack src/ProvidedTypes.fs
     github fsprojects/FSharp.TypeProviders.StarterPack src/DebugProvidedTypes.fs
+    
+---
 
-- Add the files to the Type Providers's `paket.references`:
+### Type Provider definition
+
+- In the Type Providers's `paket.references`:
 
 
     File:ProvidedTypes.fsi
     File:ProvidedTypes.fs
     File:DebugProvidedTypes.fs 
-       
 
+---
+
+### Type Provider definition     
+
+<img src="images/rtypeprovider.png" alt="R Type Provider" /> 
 
 ***
 
