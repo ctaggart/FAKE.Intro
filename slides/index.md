@@ -339,6 +339,253 @@ or
               { p with 
                   WorkingDir = tempDir }) 
       )
+      
+***
+
+### What is Paket?
+
+- Dependency manager for all .NET and Mono projects
+- Plays well with NuGet packages and [nuget.org](http://www.nuget.org)
+- Allows to reference source code files from HTTP sources and GitHub
+
+<br /><br />
+<img style="border: none" src="images/paket-logo.png" alt="Paket logo" /> 
+
+--- 
+
+### Why another package manager?
+
+- NuGet puts the package version in the path
+- Updates require manual work (at least if you use .fsx):
+
+
+    #I "packages/Deedle.1.0.1/lib/net40"
+    #I "packages/Deedle.RPlugin.1.0.1/lib/net40"
+    #I "packages/FSharp.Charting.0.90.6/lib/net40"
+    #I "packages/FSharp.Data.2.0.9/lib/net40"
+    #I "packages/MathNet.Numerics.3.0.0/lib/net40"
+    #I "packages/MathNet.Numerics.FSharp.3.0.0/lib/net40"
+    #I "packages/RProvider.1.0.13/lib/net40"
+    #I "packages/R.NET.Community.1.5.15/lib/net40"
+    #I "packages/R.NET.Community.FSharp.0.1.8/lib/net40"
+    
+--
+
+### Paket - Project Principles
+
+- Integrate well into the existing NuGet ecosystem
+- Make things work with minimal tooling (plain text files)
+- Make it work on all platforms
+- Automate everything
+- Create a nice community
+
+***
+
+### Paket file structure
+
+- `paket.dependencies`: Global definition
+- `paket.lock`: Concrete versions for all dependencies
+- `paket.references`: Dependency definition per project
+
+
+<br /><br />
+<img style="border: none" src="images/structure.png" alt="Basic structure" /> 
+
+---
+
+### paket.dependencies
+
+- Specifies all direct dependencies
+- Manually editable (or via paket.exe commands)
+
+
+     source https://nuget.org/api/v2
+           
+     nuget Newtonsoft.Json       // any version
+     nuget UnionArgParser >= 0.7 // x >= 0.7
+     nuget log4net ~> 1.2        // 1.2 <= x < 2     
+     nuget NUnit prerelease      // any version incl. prereleases
+     
+---
+
+### paket.lock
+
+- Graph of used versions for all dependencies
+
+
+    NUGET
+      remote: https://nuget.org/api/v2
+      specs:
+        log4net (1.2.10)
+        Microsoft.Bcl (1.1.9)
+          Microsoft.Bcl.Build (>= 1.0.14)
+        Microsoft.Bcl.Async (1.0.168) - >= net40 < net45
+          Microsoft.Bcl (>= 1.1.8)
+        Microsoft.Bcl.Build (1.0.21)
+        Newtonsoft.Json (6.0.8)
+        NUnit (3.0.0-alpha-4)
+          Microsoft.Bcl.Async (>= 1.0.165) - >= net40 < net45
+        UnionArgParser (0.8.2)
+
+---
+
+### paket.references
+
+- Specifies which dependencies are used in a project
+- Compareable to `packages.config`
+- Only direct dependencies need to be listed
+
+
+    Newtonsoft.Json
+    UnionArgParser
+    NUnit
+
+
+***
+
+### Installing packages
+
+
+    $ paket install
+
+- Computes `paket.lock` based on `paket.dependencies`
+- Restores all direct and transitive dependencies
+- Processes all projects and adds references to the libraries
+
+***
+
+### Checking for updates
+
+
+    $ paket outdated
+
+- Lists all dependencies that have newer versions available:
+
+<br /><br />
+<img style="border: none" src="images/paket-outdated.png" alt="Paket outdated" /> 
+
+***
+
+### Updating packages
+
+
+    $ paket update
+
+- Recomputes `paket.lock` based on `paket.dependencies`
+- Updates all versions to the latest matching all restrictions 
+- Runs `paket install`
+
+***
+
+### Restoring packages
+
+
+    $ paket restore
+
+- Restores all direct and indirect dependencies
+- Will not change `paket.lock` file
+- Can be used for CI build or from inside Visual Studio
+
+***
+
+### Convert from NuGet
+
+
+    $ paket convert-from-nuget
+
+- Finds all `packages.config` files
+  - Converts them to `paket.references` files
+  - Generates `paket.dependencies` file
+  - Computes `paket.lock` file
+- Visual Studio package restore process will be converted
+- Runs `paket install`
+
+***
+
+### Simplify dependencies
+
+
+    $ paket simplify
+
+- Computes transitive dependencies from `paket.lock` file  
+  - Removes these from `paket.dependencies`
+  - Removes these `paket.references`
+- Especially useful after conversion from NuGet ([Sample](http://fsprojects.github.io/Paket/paket-simplify.html#Sample))
+
+***
+
+### Bootstrapping
+
+- Don't commit `paket.exe` to your repository
+- Bootstrapper is available for [download](https://github.com/fsprojects/Paket/releases/latest)
+- Bootstrapper allows to download latest `paket.exe`
+- Can be used for CI build or from inside Visual Studio
+
+***
+
+### Source code dependencies
+
+- Allow to reference plain source code files
+- Available for: 
+  - [GitHub](https://www.github.com)
+  - [GitHub gists](https://gist.github.com/)
+  - HTTP resources
+  
+***
+
+### Source code dependencies
+#### GitHub sample (1)
+
+- Add dependency to the `paket.dependencies` file 
+
+
+    github forki/FsUnit FsUnit.fs
+    
+- Also add a file reference to a `paket.references` file 
+
+
+    File:FsUnit.fs
+
+***
+
+### Source code dependencies 
+#### GitHub sample (2)
+
+- `paket install` will add a new section to `paket.lock`:
+
+
+    GITHUB
+      remote: forki/FsUnit
+      specs:
+        FsUnit.fs (7623fc13439f0e60bd05c1ed3b5f6dcb937fe468)
+
+- `paket install` will also add a reference to the project:
+
+<br /><br />
+<img style="border: none" src="images/github_ref_default_link.png" alt="Source reference" />
+
+***
+
+### Source code dependencies 
+#### Use case - "Type Provider definition"
+
+- For F# Type Providers you need a couple of helper files
+- It was painful to keep these up-to-date
+- Reference F# Type Provider files in `paket.dependencies`:
+
+
+    github fsprojects/FSharp.TypeProviders.StarterPack src/ProvidedTypes.fsi
+    github fsprojects/FSharp.TypeProviders.StarterPack src/ProvidedTypes.fs
+    github fsprojects/FSharp.TypeProviders.StarterPack src/DebugProvidedTypes.fs
+
+- Add the files to the Type Providers's `paket.references`:
+
+
+    File:ProvidedTypes.fsi
+    File:ProvidedTypes.fs
+    File:DebugProvidedTypes.fs 
+       
+
 
 ***
 
@@ -371,4 +618,5 @@ or
 - We take contributions!
 - Slides are MIT licensed and made using [FsReveal](http://fsprojects.github.io/FsReveal/)
 - Send corrections to https://github.com/forki/FAKE.Intro
-- Follow @fsharpMake
+- Follow [@fsharpMake](https://twitter.com/fsharpMake)
+- Follow [@PaketManager](https://twitter.com/PaketManager)
