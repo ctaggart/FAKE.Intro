@@ -11,7 +11,9 @@
 
 ![FAKE](images/logo.png)
 
-Steffen Forkmann [@sforkmann](http://www.twitter.com/sforkmann)
+Steffen Forkmann
+ 
+[@sforkmann](http://www.twitter.com/sforkmann)
 
 ***
 
@@ -337,3 +339,36 @@ or
               { p with 
                   WorkingDir = tempDir }) 
       )
+
+***
+
+### ProjectScaffold
+
+- Used to initialialize a prototypical .NET/mono solution
+- Fully featured Paket + FAKE build process 
+- http://fsprojects.github.io/ProjectScaffold/
+
+<br /> <br />
+<img src="images/projectscaffold-logo.png" alt="ProjectScaffold" /> 
+
+---
+
+### ProjectScaffold
+
+- allows a simple one step build and release process
+- works with most build servers
+- compiles the application and runs all test projects
+- synchronizes AssemblyInfo files prior to compilation
+- generates API docs based on XML documentation
+- generates documentation based on Markdown files
+- generates and pushes NuGet packages
+
+***
+
+### Thank you
+
+- Take a look at https://github.com/fsharp/FAKE
+- We take contributions!
+- Slides are MIT licensed and made using [FsReveal](http://fsprojects.github.io/FsReveal/)
+- Send corrections to https://github.com/forki/FAKE.Intro
+- Follow @fsharpMake
