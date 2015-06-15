@@ -1,5 +1,4 @@
-[![Issue Stats](http://issuestats.com/github/fsprojects/FsReveal/badge/issue)](http://issuestats.com/github/fsprojects/FsReveal)
-[![Issue Stats](http://issuestats.com/github/fsprojects/FsReveal/badge/pr)](http://issuestats.com/github/fsprojects/FsReveal)
+# Intro to FAKE 
 
 # FsReveal [![NuGet Status](http://img.shields.io/nuget/v/FsReveal.svg?style=flat)](https://www.nuget.org/packages/FsReveal/)
 
@@ -32,3 +31,5 @@ and brings F# to the [reveal.js][revealjs] web presentation framework.
 - [@ilkerde](https://github.com/ilkerde)
 
 The default maintainer account for projects under "fsprojects" is [@fsprojectsgit](https://github.com/fsprojectsgit) - F# Community Project Incubation Space (repo management)
+See http://forki.github.io/FAKE.Intro
+ 
