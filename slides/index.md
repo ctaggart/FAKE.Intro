@@ -1,6 +1,6 @@
 - title : FAKE - F# Make
 - description : Beautiful builds with F#
-- author : Steffen Forkmann
+- author : Steffen Forkmann, Cameron Taggart
 - theme : black
 - transition : default
 
@@ -11,20 +11,22 @@
 
 ![FAKE](images/logo.png)
 
-Steffen Forkmann
- 
-[@sforkmann](http://www.twitter.com/sforkmann)
+Steffen Forkmann [@sforkmann](http://www.twitter.com/sforkmann)<br>
+Cameron Taggart [@cmr0n](http://www.twitter.com/cmr0n)
 
 ***
 
 ### Build tools for .NET
 
-- MSBuild
-- NAnt
-- PSake (Powershell)
-- AlbaCore (Rake)
-- UpperCut
-- BauBuild, Cake (Roslyn)
+- [MSBuild](https://github.com/Microsoft/msbuild) (XML)
+- [TFS XAML Builds](http://blogs.msdn.com/b/visualstudioalm/archive/2015/02/12/build-futures.aspx) (GUI & XML)
+- [NAnt](http://nant.sourceforge.net/) (XML)
+- [Grunt or Gulp](http://www.mikeobrien.net/blog/using-gulp-to-build-and-deploy-dotnet-apps-on-windows/) (JavaScript)
+- [PSake](https://github.com/psake/psake) (Powershell)
+- [Albacore](http://albacorebuild.net/) (Ruby Rake)
+- [UpperCut](https://github.com/chucknorris/uppercut) (XML? .NET & Ruby Gems)
+- [BauBuild](https://github.com/bau-build/bau) (ScriptCS)
+- [Cake](http://cakebuild.net/) (C# Make)
 
 ***
 
@@ -60,13 +62,14 @@ Steffen Forkmann
 
 ### Who uses FAKE?
 
+* Tachyus
+* Volusion
 * msu solutions GmbH
 * Octokit (by GitHub)
 * E.On Global Commodities UK
 * Deedle (by BlueMountainCapital)
 * CHECK24 Vergleichsportal GmbH
 * Olo
-* ...
  
 ---
 
@@ -79,7 +82,7 @@ Steffen Forkmann
 * Paket
 * Akka.net
 * NSubstitute
-* ... 
+* [more ...](http://fsharp.github.io/FAKE/users.html)
   
 ***
 
@@ -343,254 +346,6 @@ or
       
 ***
 
-# DEMO
-
-
-![FAKE](images/logo.png)
-
-***
-
-### What is Paket?
-
-- Dependency manager for all .NET and Mono projects
-- Plays well with NuGet packages and [nuget.org](http://www.nuget.org)
-- Allows to reference source code files from HTTP sources and GitHub
-
-<br /><br />
-<img style="border: none" src="images/paket-logo.png" alt="Paket logo" /> 
-
---- 
-
-### Why another package manager?
-
-- NuGet puts the package version in the path
-- Updates require manual work (at least if you use .fsx):
-
-
-    #I "packages/Deedle.1.0.1/lib/net40"
-    #I "packages/Deedle.RPlugin.1.0.1/lib/net40"
-    #I "packages/FSharp.Charting.0.90.6/lib/net40"
-    #I "packages/FSharp.Data.2.0.9/lib/net40"
-    #I "packages/MathNet.Numerics.3.0.0/lib/net40"
-    #I "packages/MathNet.Numerics.FSharp.3.0.0/lib/net40"
-    #I "packages/RProvider.1.0.13/lib/net40"
-    #I "packages/R.NET.Community.1.5.15/lib/net40"
-    #I "packages/R.NET.Community.FSharp.0.1.8/lib/net40"
-    
----
-
-### Paket - Project Principles
-
-- Integrate into the existing NuGet ecosystem
-- Make things work with minimal tooling (plain text files)
-- Make it work on all platforms
-- Automate everything
-- Create a nice community
-
-***
-
-### Paket file structure
-
-- `paket.dependencies`: Global definition
-- `paket.lock`: Concrete versions for all dependencies
-- `paket.references`: Dependency definition per project
-
-
-<br /><br />
-<img style="border: none" src="images/structure.png" alt="Basic structure" /> 
-
----
-
-### paket.dependencies
-
-- Specifies all direct dependencies
-- Manually editable (or via paket.exe commands)
-
-
-     source https://nuget.org/api/v2
-           
-     nuget Newtonsoft.Json       // any version
-     nuget UnionArgParser >= 0.7 // x >= 0.7
-     nuget log4net ~> 1.2        // 1.2 <= x < 2     
-     nuget NUnit prerelease      // any version incl. prereleases
-     
----
-
-### paket.lock
-
-- Graph of used versions for all dependencies
-
-
-    NUGET
-      remote: https://nuget.org/api/v2
-      specs:
-        log4net (1.2.10)
-        Microsoft.Bcl (1.1.9)
-          Microsoft.Bcl.Build (>= 1.0.14)
-        Microsoft.Bcl.Async (1.0.168) - >= net40 < net45
-          Microsoft.Bcl (>= 1.1.8)
-        Microsoft.Bcl.Build (1.0.21)
-        Newtonsoft.Json (6.0.8)
-        NUnit (3.0.0-alpha-4)
-          Microsoft.Bcl.Async (>= 1.0.165) - >= net40 < net45
-        UnionArgParser (0.8.2)
-
----
-
-### paket.references
-
-- Specifies which dependencies are used in a project
-- Compareable to `packages.config`
-- Only direct dependencies need to be listed
-
-
-    Newtonsoft.Json
-    UnionArgParser
-    NUnit
-
-
-***
-
-### Installing packages
-
-
-    $ paket install
-
-- Computes package resultion for `paket.lock`
-- Restores all direct and transitive dependencies
-- Processes all projects and adds references
-
-***
-
-### Checking for updates
-
-
-    $ paket outdated
-
-- Lists all dependencies that have newer versions:
-
-<br /><br />
-<img style="border: none" src="images/paket-outdated.png" alt="Paket outdated" /> 
-
-***
-
-### Updating packages
-
-
-    $ paket update
-
-- Recomputes `paket.lock` 
-- Runs `paket install`
-
-***
-
-### Restoring packages
-
-
-    $ paket restore
-
-- Restores all direct and indirect dependencies
-- Will not change `paket.lock` file
-- Can be used for CI build or from inside Visual Studio
-
-***
-
-### Convert from NuGet
-
-
-    $ paket convert-from-nuget
-
-- Finds all `packages.config` files
-  - Converts them to `paket.references` files
-  - Generates `paket.dependencies` file
-  - Computes `paket.lock` file
-- Visual Studio package restore process will be converted
-- Runs `paket install`
-
-***
-
-### Source code dependencies
-
-- Allow to reference plain source code files
-- Available for: 
-  - [GitHub](https://www.github.com)
-  - [GitHub gists](https://gist.github.com/)
-  - HTTP resources
-  
----
-
-### GitHub dependencies
-
-In  `paket.dependencies`: 
-
-
-    github forki/FsUnit FsUnit.fs
-    
-In `paket.references`: 
-
-
-    File:FsUnit.fs
-
----
-
-### GitHub dependencies
-
-`paket install` adds a new section to `paket.lock`:
-
-
-    GITHUB
-      remote: forki/FsUnit
-      specs:
-        FsUnit.fs (7623fc13439f0e60bd05c1ed3b5f6dcb937fe468)
-
-It will also add a reference to the project:
-
-<img style="border: none" src="images/github_ref_default_link.png" alt="Source reference" />
-
----
-
-### Type Provider definition
-
-- F# Type Providers need a couple of helper files
-- It was painful to keep these up-to-date
-- Reference StarterPack in `paket.dependencies`:
-
-
-    [lang=batch]
-    github fsprojects/FSharp.TypeProviders.StarterPack src/ProvidedTypes.fsi
-    github fsprojects/FSharp.TypeProviders.StarterPack src/ProvidedTypes.fs
-    github fsprojects/FSharp.TypeProviders.StarterPack src/DebugProvidedTypes.fs
-    
----
-
-### Type Provider definition
-
-- In the Type Providers's `paket.references`:
-
-
-    File:ProvidedTypes.fsi
-    File:ProvidedTypes.fs
-    File:DebugProvidedTypes.fs 
-
----
-
-### Type Provider definition     
-
-<img src="images/rtypeprovider.png" alt="R Type Provider" /> 
-
-***
-
-### ProjectScaffold
-
-- Used to initialialize a prototypical .NET/mono solution
-- Fully featured Paket + FAKE build process 
-- http://fsprojects.github.io/ProjectScaffold/
-
-<br /> <br />
-<img src="images/projectscaffold-logo.png" alt="ProjectScaffold" /> 
-
----
-
 ### ProjectScaffold
 
 - allows a simple one step build and release process
@@ -605,9 +360,7 @@ It will also add a reference to the project:
 
 ### Thank you
 
-- Take a look at https://github.com/fsharp/FAKE
+- Take a look at http://fsharp.github.io/FAKE/
 - We take contributions!
-- Slides are MIT licensed and made using [FsReveal](http://fsprojects.github.io/FsReveal/)
-- Send corrections to https://github.com/forki/FAKE.Intro
+- [Slides](https://github.com/ctaggart/FAKE.Intro) are MIT licensed and made using [FsReveal](http://fsprojects.github.io/FsReveal/)
 - Follow [@fsharpMake](https://twitter.com/fsharpMake)
-- Follow [@PaketManager](https://twitter.com/PaketManager)
